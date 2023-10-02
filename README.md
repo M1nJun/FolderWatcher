@@ -1,5 +1,7 @@
 # FolderWatcher
 
+Here's some stuff I learned in the process:
+
 getcwd()
 
 The preferred method for obtaining the current working directory is the getcwd() system call, which POSIX standardized:
@@ -51,3 +53,19 @@ To close a directory stream opened with opendir(), use closedir():
 ```
 
 A successful call to closedir() closes the directory stream represented by dir, includ‐ ing the backing file descriptor, and returns 0. On failure, the function returns −1 and sets errno to EBADF, the only possible error code, signifying that dir is not an open directory stream.
+
+# Running a New Process
+
+In Unix, the act of loading into memory and executing a program image is separate from the act of creating a new process. One system call loads a binary program into memory, replacing the previous contents of the address space, and begins execution of the new program. This is called executing a new program, and the functionality is pro‐ vided by the exec family of calls.
+A different system call is used to create a new process, which initially is a near-duplicate of its parent process. Often, the new process immediately executes a new program. The act of creating a new process is called forking, and this functionality is provided by the fork() system call. Two acts—first a fork to create a new process, and then an exec to load a new binary into that process—are thus required to execute a new program in a new process. We will cover the exec calls first, then fork().
+
+execve()
+
+```C
+
+int execve (const char *filename,
+            char *const argv[],
+            char *const envp[]);
+```
+
+On success, the exec system calls do not return. On failure, the calls return −1
