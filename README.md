@@ -1,6 +1,6 @@
-# FolderWatcher
-
 Here's some stuff I learned in the process:
+
+# Directories
 
 getcwd()
 
