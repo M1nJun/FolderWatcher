@@ -17,6 +17,11 @@ int main()
   while((entp = readdir(watchDIR))!=NULL) {
     if(entp->d_type == DT_REG)
       printf("%s\n",entp->d_name);
+      //call stat for each file
+      //check the info: modification time for the file
+      //save the info about the file that changed and leave a log
+      //log file:name of the file, and time in which it changed
+      
     }
   closedir(watchDIR);
   
