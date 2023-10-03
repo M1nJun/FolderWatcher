@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <signal.h>
 
 //argument here would be start or stop
 int main(const char * argv[]){
@@ -32,6 +33,13 @@ int main(const char * argv[]){
     }
     else{
         //read pid from txt file and kill that process
-        
+
+        //question: Is it okay for pid to not be a pid_t type?
+        char pid[128];
+        FILE* f = fopen("pid.txt", "rb");
+        fgets(pid, 127, f);
+        fclose(f);
+
+        kill(pid,SIGKILL);
     }
 }
