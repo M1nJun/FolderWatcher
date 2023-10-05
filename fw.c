@@ -35,9 +35,9 @@ int main(const char * argv[]){
         //read pid from txt file and kill that process
 
         //question: Is it okay for pid to not be a pid_t type?
-        char pid[128];
+        pid_t pid;
         FILE* f = fopen("pid.txt", "rb");
-        fgets(pid, 127, f);
+        fscanf(f,"%ld",&pid);
         fclose(f);
 
         kill(pid,SIGKILL);
