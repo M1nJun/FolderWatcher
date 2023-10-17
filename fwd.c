@@ -3,8 +3,11 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #include <time.h>
+#include <sys/time.h>
+#include <dirent.h>
+#include <string.h>
 
-int timeDiff (const timespec* lhs, const timespec* rhs)
+int timeDiff (const struct timespec* lhs, const struct timespec* rhs)
 {
     if (lhs->tv_sec < rhs->tv_sec)
         return 0;
@@ -15,12 +18,8 @@ int timeDiff (const timespec* lhs, const timespec* rhs)
 int main(const char * argv[])
 {
     char * path = argv[1];
-    //cwd: current working directory
-    char cwd[1024];
-    getcwd(cwd,1024);
-    
     //creating directory stream
-    DIR* watchDIR = opendir(cwd);
+    DIR* watchDIR = opendir(path);
     struct dirent* entp;
     
     FILE* f = fopen("log.txt", "w");
@@ -28,24 +27,29 @@ int main(const char * argv[])
     struct stat st_l;
     //infinite loop
     while(1){
-        struct timespec ts;
-        clock_gettime(CLOCK_REALTIME, &ts);
+        time_t now = time(NULL);
 
-        sleep(300); //sleep for 5 minutes = 300 seconds
+        sleep(30); //sleep for 5 minutes = 300 seconds
 
         //a single readdir returns the next entry in the directory(watchDIR)
         //when the entire directory is read, it will return NULL
         while((entp = readdir(watchDIR))!=NULL) {
-            if(entp->d_type == DT_REG)
-            printf("%s\n",entp->d_name);
+            char * f_name;
+            if(entp->d_type == DT_REG){
+                f_name = entp->d_name;
+            }
             //call stat for each file
             struct stat st;
-            int stat (path, &st);
-            if (timeDiff(&ts, &st.st_mtim)){
+            stat(f_name, &st);
+            if (now < st.st_mtime){
                 //question: should I combine d_name and the last modification time into a big string
                 //and write it out to the log file?
-                fprintf(f,)
+                char log[100];
+                sprintf(log,"%s %s\n",f_name, ctime(&st.st_mtime));
+                fprintf(f,"%s",log);
+                fflush(f);
             }
+        rewinddir(watchDIR);
 
 
             //question:to compare the two timespecs, I need at least one initial log in the txt file.
@@ -56,9 +60,8 @@ int main(const char * argv[])
             //save the info about the file that changed and leave a log
             //log file:name of the file, and time in which it changed
             
-            }
+        }
         closedir(watchDIR);
-        
     }
     return 0;
 }

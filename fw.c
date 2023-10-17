@@ -2,15 +2,16 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <signal.h>
+#include <sys/types.h>
 
 //argument here would be start or stop
-int main(const char * argv[]){
+int main(int argc,const char * argv[]){
     if(strcmp(argv[1], "start") == 0){
         pid_t pid = fork();
         if(pid == 0){
             //child process
             //run fwd
-            char * fwdPath = "fwd.c";
+            char * fwdPath = "fwd";
             //command line arguments for new program
             char * cmdLine[] = {
                 "fwd",
@@ -28,7 +29,8 @@ int main(const char * argv[]){
             //parent process
             //save pid in txt file
             FILE* f = fopen("pid.txt", "w");
-            fprintf(f, "%s", pid);
+            fprintf(f, "%ld", pid);
+            fclose(f);
         }
     }
     else{
